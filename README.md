@@ -1,2 +1,74 @@
-# Telerun-setup
-Repository to install Telerun 
+# Telerun
+
+Telerun is a tool which lets you compile and run code on remote servers. This is the repository for the Telerun client.
+
+## Setup
+
+### Step 1: Installing Telerun in your system
+
+This repository includes a bash script `install_telerun.sh` that will handle the download and installation of telerun. 
+
+First ensure that you are able to execute your script with
+```bash
+chmod +x install_telerun.sh
+```
+then run it as
+```
+./install_telerun.sh
+```
+This will likely as for your password; make sure you have administrative access. 
+
+### Step 2: Login
+
+Once you've downloaded the Telerun client, you need to configure it with the credentials you'll use to authenticate with the server: you will receive a username and token by email in the first week of class. Your token should look something like this:
+```
+4ed3536faf4ac1440b996a2f770578a26e1855f2ce11af15b64a4f18ac1e7cd5
+```
+To configure Telerun with your credentials, run the second script `authorize-telerun.sh` (make sure you have permission to execute it):
+
+```bash
+./authorize-telerun.sh
+```
+
+and copy and paste your username and token into the terminal when prompted.
+
+This will create a file `auth.json` in the same directory as your Telerun install. 
+
+## Using Telerun
+
+### Submitting Jobs
+
+Once you've downloaded the client and logged in, you can simply run
+
+```python
+telerun submit my_program.cpp
+```
+
+**IMPORTANT:** You must have a working version of Python (>=3.11) available in your system for the above command to work properly. 
+
+This uploads your source code to the server and creates a "job," which is a unit of work to be executed by the Telerun server.
+
+### Running on Different Platforms
+
+Currently, Telerun can run jobs on either a powerful CPU-only x86-64 execution host, or a GPU-enabled execution host (with weaker CPUs). The availability of different platforms may vary week-by-week over the course of the semester.
+
+* **To run C++ code on the CPU-only host**: make sure your source filename ends with the **extension `.cpp`**
+* **To run CUDA code on the GPU-enabled host**: make sure your source filename ends with the **extension `.cu`**
+
+### Job Output
+
+When you submit a Telerun job, the Telerun client saves the job's output on your local machine at the path `./telerun-out/<job_id>/`, relative to the current working directory.
+
+The terminal output from compiling and executing your job will be saved to `./telerun-out/<job_id>/compile_log.txt` and `./telerun-out/<job_id>/execute_log.txt`.
+
+Additionally, the program you submit can write arbitrary output files to the directory `./out/` **on the remote server**, and any files in that directory will be downloaded and saved on your local machine in the directory `./telerun-out/<job_id>/`.
+
+If you want ASM/PTX/SASS output, you can run Telerun with the `--asm` flag.
+
+## Server Etiquette
+
+Telerun executes student code on the remote server **without sandboxing**. If you wanted to break or take over the remote execution host by submitting a malicious program, you would find that it is not hard to do so.
+
+We ask that you please don't **deliberately** submit malicious code through Telerun. We rely on a certain level of trust and good faith to keep the system running; additionally, we log the username and source code associated with every job submitted, so that if someone tries to abuse the system we can identify them and ask them to stop.
+
+If you manage to **accidentally** break the Telerun system by submitting a buggy program, then Telerun itself is to blame for failing to protect against that failure mode. We ask that you please let us know, and we'll do our best to fix the issue quickly.
